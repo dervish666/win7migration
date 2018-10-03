@@ -46,7 +46,7 @@ function Installed( $program ) {
 }
 
 $response = Read-Host "Do you want to do a GPUdate?"
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     Write-Host "Gonna do a GPUpdate to make sure the onedrive folder is present"
     Write-Host "You will now probably be logged off...."
     gpupdate.exe /force /Logoff
@@ -131,7 +131,7 @@ If (Test-Path $userfolder) {
 }
 
 $response = Read-Host("Do you want to restore the users folders? ")
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     #Rename Sticky notes ready for import
     if ($winver.Version.Major -eq '10') {
         if (Test-Path "$userfolder\Sticky Notes\StickyNotes.snt") {
@@ -186,7 +186,7 @@ if (Test-Path $userfolder\bookmarks) {
 }
 
 $response = Read-Host("Do you want to restore the Docs/desktop/pic/vids folders to Onedrive? ") 
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     if ($usb) {
         $sauce = $userfolder
 
@@ -224,7 +224,7 @@ if ($response -eq 'y' -or $response -eq 'Y') {
 }
 
 $response = Read-Host ("Do you want to copy the psts to downloads? ")
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     # Copy pst files to Downloads folder. 
     logit("Copying the psts to the Downloads folder")
     Copy-Item -Path $userfolder\*.pst -Include "*.pst" -Destination "$userprofile\Downloads\" -Recurse
@@ -232,7 +232,7 @@ if ($response -eq 'y' -or $response -eq 'Y') {
 }
 
 $response = Read-Host "Do you want to copy the restored folder to the NAS? "
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     if ($usb) {
         New-PSDrive -Name X -PSProvider FileSystem -Root \\10.61.11.125\ukipst\Import -Credential ukiadm
         Copy-Item -Path $userfolder -Destination X:\$oldname -Recurse -Force

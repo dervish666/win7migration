@@ -24,7 +24,7 @@ $username = $username.Trim()
 $defdest = "\\UKBHSR255\PSTImport\$username"
 
 $response = Read-Host("Do you want to backup to USB key? ")
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     $driveletter = Read-Host("Please enter the drive letter for the usb key")
     $userfolder = "$($driveletter):\$username"
     $usb = $true
@@ -123,7 +123,7 @@ Write-Host "All the above files have been copied"
 
 $response = Read-Host "Do you want to back up the docs/desktop/pics/videos folders? "
 
-if ($response -eq 'y' -or $response -eq 'Y'){
+if ($response -eq 'y'){
     $documents = [Environment]::GetFolderPath("MyDocuments")
     $desktop = [Environment]::GetFolderPath("Desktop")
     $pictures = [Environment]::GetFolderPath("MyPictures")
@@ -148,7 +148,7 @@ if ($response -eq 'y' -or $response -eq 'Y'){
 
 #region psts
 $response = Read-Host "Do you want to back up the psts? "
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq 'y') {
     # Find out if outlook is running
     if (Get-Process -EA SilentlyContinue outlook | Where-Object {$_.ProcessName -eq "Outlook"}) {
         Write-Host "Outlook running..."
@@ -206,7 +206,7 @@ if ($response -eq 'y' -or $response -eq 'Y') {
         }
 
         $response = Read-Host "Do you want to disconnect the PSTS from outlook?"
-        if ($response -eq 'y' -or $response -eq 'Y'){
+        if ($response -eq 'y'){
             $outlook = New-Object -ComObject Outlook.Application
             # Disconnect all mapped psts and close outlook
             Write-Host "Waiting for outlook to start"
