@@ -6,7 +6,7 @@
 #                             #
 #  Sam Castillo               #
 ###############################
-
+#region setup
 $winver = [Environment]::OSVersion
 [string]$username = WMIC /node:$env:computername ComputerSystem Get username 
 $username = $username  -replace ".*\\", ""
@@ -35,7 +35,9 @@ logit("Log file generated at $(Get-Date)`n")
 logit("`nUsername : $username")
 logit("`nMachine  : $env:computername")
 logit("Restoring to $($winver.VersionString)")
+#endregion
 
+#region applications
 #Check all applications are installed
 function Installed( $program ) {    
     $x86 = ((Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall") |
@@ -103,7 +105,9 @@ ForEach ($proc in $process) {
 }
 
 Write-Host "If any of the above processes are not running, please fix before continuing...`n`n"
+#endregion
 
+#region startrestore
 Write-Host "Are you going to be restoring from the USB Key?"
 $response = Read-Host "Restoring from USB? "
 if ($response -ne 'y'-or $response -ne 'Y') {
@@ -222,7 +226,9 @@ if ($response -eq 'y') {
         }
     }
 }
+#endregion
 
+#region finishup
 $response = Read-Host ("Do you want to copy the psts to downloads? ")
 if ($response -eq 'y') {
     # Copy pst files to Downloads folder. 
@@ -242,3 +248,4 @@ if ($response -eq 'y') {
 logit("All tasks finished at $(Get-Date) ")
 Write-Host "Fin"
 Read-Host
+#endregion

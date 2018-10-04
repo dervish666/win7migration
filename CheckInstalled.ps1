@@ -41,6 +41,12 @@ ForEach ($app in $applications) {
     if (!($installed)) {
         Write-Host -ForegroundColor Red $installed
         "$app is not installed" | Out-File -Append $outputfile
+        if ($app -eq "Office 16") {
+            Write-Host "Office 16 not found, looking for Office 2013"
+            $app = "Microsoft Office Standard 2013"
+            $installed = Is-Installed($app)
+            Write-Host -NoNewline "$app : " $installed
+        }
         Read-Host
     } else {
         Write-Host -ForegroundColor Green $installed
