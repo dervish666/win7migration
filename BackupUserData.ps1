@@ -21,7 +21,11 @@ function logit([string]$Entry) {
 [string]$username = WMIC /node:$env:computername ComputerSystem Get username 
 $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
-$defdest = "\\UKBHSR255\PSTImport\$username"
+$contents = Get-Content ".\defaults.txt"
+$def = $contents[1].split(":")[1]
+$defdest = "$def\$username"
+$nas = $contents[0].split(":")[1]
+$nascreds = $contents[2].split(":")[1]
 
 $response = Read-Host("Do you want to backup to USB key? ")
 if ($response -eq 'y') {
@@ -234,18 +238,30 @@ if ($response -eq 'y') {
 #endregion
 
 Invoke-Item $userfolder
-"$username copied at $(Get-Date) to $userfolder `n" | Out-File -FilePath "\\UKBHSR255\PSTImport\MigrationLog.log" -Append
-"$username,$userfolder,$(Get-Date)" | Out-File -FilePath "\\UKBHSR255\PSTImport\Current.csv" -Append
+"$username copied at $(Get-Date) to $userfolder `n" | Out-File -FilePath "$def\MigrationLog.log" -Append
+"$username,$userfolder,$(Get-Date)" | Out-File -FilePath "$def\Current.csv" -Append
 
-Write-Host "Looking on the C drive for all psts... "
-$drivepsts = Get-ChildItem -Path "C:\" -Recurse -Include '*.pst' -ErrorAction SilentlyContinue | Select-Object fullname,lastwritetime
-
-if ($drivepsts -ne $null) {
-    Write-Host "I have found the following psts on the computer, some may have been imported already"
-    logit($drivepsts)
-} else {
-    Write-Host "No Pst's found."
+$response = Read-Host "Do you want to copy the restored folder to the NAS? "
+if ($response -eq 'y') {
+    if ($usb) {
+        New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
+        Copy-Item -Path $userfolder -Destination X:\$oldname -Recurse -Force
+    }
 }
+
+$response = Read-Host "Do you want to check the hard drive for any more psts?"
+if ($response -eq 'y') {
+    Write-Host "Looking on the C drive for all psts... "
+    $drivepsts = Get-ChildItem -Path "C:\" -Recurse -Include '*.pst' -ErrorAction SilentlyContinue | Select-Object fullname,lastwritetime
+
+    if ($drivepsts -ne $null) {
+        Write-Host "I have found the following psts on the computer, some may have been imported already"
+        logit($drivepsts)
+    } else {
+        Write-Host "No Pst's found."
+    }
+}
+
 logit("All tasks finished at $(Get-Date) ")
 Write-Host "Fin"
 Write-Host "Press enter to exit"

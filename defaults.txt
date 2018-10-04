@@ -1,0 +1,3 @@
+NAS :\\10.61.11.125\ukipst\Import
+BACKUP:\\UKBHSR255\PSTImport
+CREDS:ukiadm

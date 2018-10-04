@@ -12,6 +12,12 @@ $winver = [Environment]::OSVersion
 $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
 
+$contents = Get-Content ".\defaults.txt"
+$def = $contents[1].split(":")[1]
+$defdest = "$def\$username"
+$nas = $contents[0].split(":")[1]
+$nascreds = $contents[2].split(":")[1]
+
 Write-Host "====================="
 Write-Host "User Restore script.."
 Write-Host "====================="
@@ -111,9 +117,9 @@ Write-Host "If any of the above processes are not running, please fix before con
 Write-Host "Are you going to be restoring from the USB Key?"
 $response = Read-Host "Restoring from USB? "
 if ($response -ne 'y'-or $response -ne 'Y') {
-    Write-Host "Default destination is : \\10.61.11.125\ukipst\Import"
-    if (($userfolder = Read-Host "Please enter the destination or enter for default:") -eq '') {
-        New-PSDrive -Name X -PSProvider FileSystem -Root \\10.61.11.125\ukipst\Import -Credential ukiadm
+    Write-Host "Default source is : $nas"
+    if (($userfolder = Read-Host "Please enter the source or enter for default:") -eq '') {
+        New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
     } else {
         $userfolder
     }   
@@ -235,14 +241,6 @@ if ($response -eq 'y') {
     logit("Copying the psts to the Downloads folder")
     Copy-Item -Path $userfolder\*.pst -Include "*.pst" -Destination "$userprofile\Downloads\" -Recurse
     Invoke-Item $userprofile\Downloads\
-}
-
-$response = Read-Host "Do you want to copy the restored folder to the NAS? "
-if ($response -eq 'y') {
-    if ($usb) {
-        New-PSDrive -Name X -PSProvider FileSystem -Root \\10.61.11.125\ukipst\Import -Credential ukiadm
-        Copy-Item -Path $userfolder -Destination X:\$oldname -Recurse -Force
-    }
 }
 
 logit("All tasks finished at $(Get-Date) ")
