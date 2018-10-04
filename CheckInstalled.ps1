@@ -41,6 +41,7 @@ ForEach ($app in $applications) {
     if (!($installed)) {
         Write-Host -ForegroundColor Red $installed
         "$app is not installed" | Out-File -Append $outputfile
+        Read-Host
     } else {
         Write-Host -ForegroundColor Green $installed
     }
@@ -65,6 +66,7 @@ ForEach ($proc in $process) {
         Write-Host -ForegroundColor Red -NoNewLine "$proc is not running! - "
         "$proc is not running" | Out-File -Append $outputfile
         Write-Host "Please check if this is something that can be installed manually before continuing."
+        Read-Host
     } else {
         Write-Host -ForegroundColor Green "$proc is running..."
     }
