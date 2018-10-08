@@ -27,6 +27,8 @@ $defdest = "$def\$username"
 $nas = $contents[0].split(":")[1]
 $nascreds = $contents[2].split(":")[1]
 
+
+# Find the main folder we are going to work with
 $response = Read-Host("Do you want to backup to USB key? ")
 if ($response -eq 'y') {
     $driveletter = Read-Host("Please enter the drive letter for the usb key")
@@ -36,14 +38,12 @@ if ($response -eq 'y') {
     Write-Host -Nonewline "Default destination : "
     Write-Host $defdest
    if(($userfolder = Read-Host "Please enter destination or press enter for default") -eq ''){
-       $defdest
+       $userfolder = $defdest
     } 
    else {
        $userfolder
     }
 }
-
-# Find the main folder we are going to work with
 
 # Set the logfile
 $logfile = "$userfolder\$username.log"
@@ -67,17 +67,20 @@ logit("`nUsername : $username")
 
 # Find folder in ukbhsr255
 logit("`nUser folder : $userfolder `n")
+logit("Powershell version : $($PSVersionTable.PSVersion.Major)")
 
 #Show the current network drives
-
 $networkdrives = Get-PSDrive -PSProvider FileSystem | Select-Object Name, DisplayRoot | Where-Object {$_.DisplayRoot -ne $null}
 logit($networkdrives)
-
 #endregion
 
 # Check if sourcefolder is accessible.
+if ($($PSVersionTable.PSVersion.Major) -gt '4') {
+    $UserProfile = [Environment]::GetFolderPath("UserProfile")
+} else {
+    $UserProfile = "C:\Users\$username"
+}
 
-$UserProfile = [Environment]::GetFolderPath("UserProfile")
 
 #region copystuff
 # Copy all files to destination folder
@@ -137,13 +140,15 @@ if ($response -eq 'y'){
     $destdocs = "$userfolder\Documents","$userfolder\Desktop","$userfolder\Pictures","$userfolder\Videos"
     $i=0
     ForEach ($folder in $sourcedocs) {
-        logit("Copying $folder please wait...")
-        if (Test-Path $folder) {
-            $cmdargs = @("$folder","$($destdocs[$i])","/xf","*.pst","/MIR","/NFL","/R:0","/W:2")
-            Invoke-Expression "robocopy @cmdargs"
-        } else {
-            Write-Host "Arrrrgggghhh!!! I can't find the folder!!! "
-            Invoke-Item $sauce
+        if (!($folder -eq '')) {
+            logit("Copying $folder please wait...")
+            if (Test-Path $folder) {
+                $cmdargs = @("$folder","$($destdocs[$i])","/xf","*.pst","/MIR","/NFL","/R:0","/W:2")
+                Invoke-Expression "robocopy @cmdargs"
+            } else {
+                Write-Host "Arrrrgggghhh!!! I can't find the folder!!! "
+                Invoke-Item $sauce
+            }
         }
         $i++
     }

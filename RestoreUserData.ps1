@@ -119,11 +119,11 @@ $response = Read-Host "Restoring from USB? "
 if ($response -ne 'y'-or $response -ne 'Y') {
     Write-Host "Default source is : $nas"
     if (($userfolder = Read-Host "Please enter the source or enter for default:") -eq '') {
-        New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
+        $userfolder = New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
     } else {
         $userfolder
     }   
-    $userfolder = "$userfolder\$oldname"
+    $userfolder = "$($userfolder):\$oldname"
 } else {
     $driveletter = Read-Host("Please enter drive letter for the usb key")
     $userfolder = "$($driveletter):\$oldname"
@@ -133,7 +133,7 @@ if ($response -ne 'y'-or $response -ne 'Y') {
 if (Test-Path $logfile) {
     Remove-Item -Path $logfile -Force
 }
-
+Write-Host "Looking for $userfolder"
 If (Test-Path $userfolder) {
     logit("Found the users folder in $userfolder")
 } else {
