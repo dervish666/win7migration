@@ -13,9 +13,9 @@ $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
 
 $contents = Get-Content ".\defaults.txt"
+$nas = $contents[0].split(":")[1]
 $def = $contents[1].split(":")[1]
 $defdest = "$def\$username"
-$nas = $contents[0].split(":")[1]
 $nascreds = $contents[2].split(":")[1]
 
 Write-Host "====================="
@@ -70,7 +70,6 @@ $applications =
 "Trend Micro OfficeScan Agent",
 "EDD Client",
 "Google Chrome"
-
 
 ForEach ($app in $applications) {
     $installed = Installed($app)

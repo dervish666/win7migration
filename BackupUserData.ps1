@@ -22,9 +22,9 @@ function logit([string]$Entry) {
 $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
 $contents = Get-Content ".\defaults.txt"
+$nas = $contents[0].split(":")[1]
 $def = $contents[1].split(":")[1]
 $defdest = "$def\$username"
-$nas = $contents[0].split(":")[1]
 $nascreds = $contents[2].split(":")[1]
 
 
@@ -65,12 +65,12 @@ if (Test-Path $logfile) {
 logit("Log file generated at $(Get-Date)`n`n")
 logit("`nUsername : $username")
 
-# Find folder in ukbhsr255
+#Find the user folder
 logit("`nUser folder : $userfolder `n")
 logit("Powershell version : $($PSVersionTable.PSVersion.Major)")
 
 #Show the current network drives
-$networkdrives = Get-PSDrive -PSProvider FileSystem | Select-Object Name, DisplayRoot | Where-Object {$_.DisplayRoot -ne $null}
+$networkdrives = Get-PSDrive -PSProvider FileSystem | Select-Object Name, DisplayRoot, CurrentLocation, Description
 logit($networkdrives)
 #endregion
 
@@ -80,7 +80,6 @@ if ($($PSVersionTable.PSVersion.Major) -gt '4') {
 } else {
     $UserProfile = "C:\Users\$username"
 }
-
 
 #region copystuff
 # Copy all files to destination folder
@@ -140,7 +139,7 @@ if ($response -eq 'y'){
     $destdocs = "$userfolder\Documents","$userfolder\Desktop","$userfolder\Pictures","$userfolder\Videos"
     $i=0
     ForEach ($folder in $sourcedocs) {
-        if (!($folder -eq '')) {
+        if (!($null -eq $folder)) {
             logit("Copying $folder please wait...")
             if (Test-Path $folder) {
                 $cmdargs = @("$folder","$($destdocs[$i])","/xf","*.pst","/MIR","/NFL","/R:0","/W:2")
@@ -168,13 +167,10 @@ if ($response -eq 'y') {
         Write-Host "Waiting for outlook to start"
         Start-Sleep -Seconds 10
     }
-
     # Check all mapped psts from outlook
     $Namespace = $outlook.getNamespace("MAPI")
     $all_psts = $Namespace.Stores | Where-Object {($_.ExchangeStoreType -eq '3') -and ($_.FilePath -like '*.pst') -and ($_.IsDataFileStore -eq $true)}
-
     $pstfilepaths = @()
-
     ForEach ($pst in $all_psts) {
         $pstfilepaths += $pst.FilePath.ToString()
         $pstrootfolders += $pst.GetRootFolder.ToString()
@@ -213,7 +209,6 @@ if ($response -eq 'y') {
                 Write-Host "Unable to copy file."
             }
         }
-
         $response = Read-Host "Do you want to disconnect the PSTS from outlook?"
         if ($response -eq 'y'){
             $outlook = New-Object -ComObject Outlook.Application
@@ -222,7 +217,6 @@ if ($response -eq 'y') {
             Start-Sleep -Seconds 10
             $Namespace = $outlook.getNamespace("MAPI")
             $all_psts = $Namespace.Stores | Where-Object {($_.ExchangeStoreType -eq '3') -and ($_.FilePath -like '*.pst') -and ($_.IsDataFileStore -eq $true)}
-
             ForEach ($pst in $all_psts){
                 Write-Host "Going to try and disconnect $($pst.FilePath)"
                 try {
@@ -258,7 +252,6 @@ $response = Read-Host "Do you want to check the hard drive for any more psts?"
 if ($response -eq 'y') {
     Write-Host "Looking on the C drive for all psts... "
     $drivepsts = Get-ChildItem -Path "C:\" -Recurse -Include '*.pst' -ErrorAction SilentlyContinue | Select-Object fullname,lastwritetime
-
     if ($drivepsts -ne $null) {
         Write-Host "I have found the following psts on the computer, some may have been imported already"
         logit($drivepsts)
