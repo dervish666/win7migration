@@ -118,7 +118,12 @@ if (!($UseRestoreDefaults)) {
     Write-Host "Are you going to be restoring from the USB Key?"
     $response = Read-Host "Restoring from USB? "
 }
-if ($response -ne 'y' -or $AlwaysRestoreFromUSB) {
+
+if ($response -eq 'y' -or $AlwaysRestoreFromUSB) {
+    $driveletter = Read-Host("Please enter drive letter for the usb key")
+    $userfolder = "$($driveletter):\$oldname"
+    $usb = $true
+} else {
     Write-Host "Default source is : $nas"
     if (($userfolder = Read-Host "Please enter the source or enter for default:") -eq '') {
         $userfolder = New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
@@ -126,10 +131,6 @@ if ($response -ne 'y' -or $AlwaysRestoreFromUSB) {
         $userfolder
     }   
     $userfolder = "$($userfolder):\$oldname"
-} else {
-    $driveletter = Read-Host("Please enter drive letter for the usb key")
-    $userfolder = "$($driveletter):\$oldname"
-    $usb = $true
 }
 
 if (Test-Path $logfile) {
@@ -151,7 +152,7 @@ if ($response -eq 'y' -or $AlwaysRestoreUsersFolders) {
     if ($winver.Version.Major -eq '10') {
         if (Test-Path "$userfolder\Sticky Notes\StickyNotes.snt") {
             Rename-Item -Path "$userfolder\Sticky Notes\StickyNotes.snt" -NewName "ThresholdNotes.snt"
-            logit("Renamed sticky notes")
+            logit("Converted sticky notes")
         }
         # Set destination array
         $destfolder = "$userprofile\",

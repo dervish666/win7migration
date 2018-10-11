@@ -14,17 +14,19 @@ List of files:
         This will check if the essential software is a) installed and b) running. 
 
     CheckRemoteComputers.ps1 
-        The idea behind this is to check all the computers in the list ADPCList.txt so we can see what is installed on the already built machines. At the moment it isn't working as I would like. 
+        The idea behind this is to check all the computers in the list ADPCList.txt so we can see what is installed 
+        on the already built machines. At the moment it isn't working as I would like. 
 
     defaults.txt
-        This is for your list of default values for things like the backup destination, it also includes the default answers so the scipt can be run unattended. 
+        This is for your list of default values for things like the backup destination, it also includes the default 
+        answers so the scipt can be run unattended. 
 
-Each of the .ps1 files includes a batch file to facilitate running easily. The script can be run from the batch or direcly in powershell if script execution is enabled. 
+Each of the .ps1 files includes a batch file to facilitate running easily. The script can be run from the batch or directly in powershell if script execution is enabled. 
 
 
 Backup User Data script. 
 
-Functions:
+Process:
 
     Backup user data to a secure location 
     Backup the my docs/desktop/pictures/videos folders
@@ -38,7 +40,7 @@ Functions:
 
 Restore User Data script.
 
-Functions:
+Process:
 
     Check the new computer for essential software
     Check all necessary processes are running
@@ -75,15 +77,23 @@ This file will set the defaults for the script, the left hand side is the variab
 
 Each entry in detail: 
 
+    Universal variables:
+
     nas: - This is a text string for the secondary backup location 
     def: - This is the alternative backup (It is recommended to backup to USB for speed)
     creds: - The username for the secondary location
-    UseBackupDefaults: - This is a flag to use the defaults, if set to false the backup script will ask for each section
+    
+    Backup variables:
+    
+    UseBackupDefaults: - This is a flag to use the defaults, if set to false the backup script will ask 
+    for each section
     AlwaysBackupToUSB: - Sets the script to backup to USB, it will still ask where the drive is located
     AlwaysBackupDocs: - Sets the script to backup the My Documents/Desktop/Pictures/Videos folders
     AlwaysBackupPST: - Set the script to check for active PSTs and back them up
     AlwaysBackupToNAS: - Sets the script to backup the backup to the secondary location
     AlwaysCheckForPSTs: - Sets the script to check the hard drive for any inactive PSTs
+
+    Restore variables:
 
     UseRestoreDefaults: - Same as backup but for the restore script
     AlwaysRestoreFromUSB: - Sets the script to restore from USB
