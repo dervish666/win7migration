@@ -25,6 +25,7 @@ Each of the .ps1 files includes a batch file to facilitate running easily. The s
 Backup User Data script. 
 
 Functions:
+
     Backup user data to a secure location 
     Backup the my docs/desktop/pictures/videos folders
     Backup Google Chrome bookmarks
@@ -38,6 +39,7 @@ Functions:
 Restore User Data script.
 
 Functions:
+
     Check the new computer for essential software
     Check all necessary processes are running
     Ensure GPUdate is run to trigger OneDrive install
@@ -51,6 +53,7 @@ Functions:
 
 defaults text file
     Looks a bit like this: 
+
         nas:\\10.61.11.125\ukipst\Import
         def:\\UKBHSR255\PSTImport
         creds:ukiadm
@@ -66,11 +69,12 @@ defaults text file
         AlwaysRestoreToOneDrive:true
         AlwaysCopyPSTSToDLs:true
 
-    This file will set the defaults for the script, the left hand side is the variable name and the right hand side is the value. Both scripts will read from the same file but only use the variable they need. 
+This file will set the defaults for the script, the left hand side is the variable name and the right hand side is the value. Both scripts will read from the same file but only use the variable they need. 
 
                                 DO NOT CHANGE ANY VALUE ON THE LEFT HAND SIDE!!!
 
 Each entry in detail: 
+
     nas: - This is a text string for the secondary backup location 
     def: - This is the alternative backup (It is recommended to backup to USB for speed)
     creds: - The username for the secondary location
