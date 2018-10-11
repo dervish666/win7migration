@@ -26,11 +26,26 @@ $nas = $contents[0].split(":")[1]
 $def = $contents[1].split(":")[1]
 $defdest = "$def\$username"
 $nascreds = $contents[2].split(":")[1]
+$usedefaults = $contents[3].split(":")[1]
+$AlwaysBackupToUSB = $contents[4].split(":")[1]
+$AlwaysBackupDocs = $contents[5].split(":")[1]
+$AlwaysBackupPST = $contents[6].split(":")[1]
+$AlwaysBackupToNAS = $contents[7].split(":")[1]
+$AlwaysCheckForPSTs = $contents[8].split(":")[1]
 
+#Checking defaults.
+
+if ($usedefaults) {
+    Write-Host "Using default values!!"
+    Read-Host
+}
 
 # Find the main folder we are going to work with
-$response = Read-Host("Do you want to backup to USB key? ")
-if ($response -eq 'y') {
+if (!($usedefaults)) {
+    $response = Read-Host("Do you want to backup to USB key? ")
+} 
+if ($response -eq 'y' -or $AlwaysBackupToUSB) {
+    Get-WmiObject Win32_Volume -Filter ("DriveType={0}" -f [int][System.io.Drivetype]::removable) | Select-Object Name, capacity, filesystem
     $driveletter = Read-Host("Please enter the drive letter for the usb key")
     $userfolder = "$($driveletter):\$username"
     $usb = $true
@@ -127,9 +142,11 @@ $Destcheck
 logit($(Compare-Object -ReferenceObject $Sourcecheck -DifferenceObject $Destcheck))
 Write-Host "All the above files have been copied"
 
-$response = Read-Host "Do you want to back up the docs/desktop/pics/videos folders? "
+if (!($usedefaults)) {
+    $response = Read-Host "Do you want to back up the docs/desktop/pics/videos folders? "
+}
 
-if ($response -eq 'y'){
+if ($response -eq 'y' -or $AlwaysBackupDocs){
     $documents = [Environment]::GetFolderPath("MyDocuments")
     $desktop = [Environment]::GetFolderPath("Desktop")
     $pictures = [Environment]::GetFolderPath("MyPictures")
@@ -155,8 +172,11 @@ if ($response -eq 'y'){
 #endregion
 
 #region psts
-$response = Read-Host "Do you want to back up the psts? "
-if ($response -eq 'y') {
+if (!($usedefaults)) {
+    $response = Read-Host "Do you want to back up the psts? "
+}
+
+if ($response -eq 'y' -or $AlwaysBackupPST) {
     # Find out if outlook is running
     if (Get-Process -EA SilentlyContinue outlook | Where-Object {$_.ProcessName -eq "Outlook"}) {
         Write-Host "Outlook running..."
@@ -240,16 +260,22 @@ Invoke-Item $userfolder
 "$username copied at $(Get-Date) to $userfolder `n" | Out-File -FilePath "$def\MigrationLog.log" -Append
 "$username,$userfolder,$(Get-Date)" | Out-File -FilePath "$def\Current.csv" -Append
 
-$response = Read-Host "Do you want to copy the restored folder to the NAS? "
-if ($response -eq 'y') {
+if (!($usedefaults)) {
+    $response = Read-Host "Do you want to copy the restored folder to the NAS? "
+}
+
+if ($response -eq 'y' -or $AlwaysBackupToNAS) {
     if ($usb) {
         New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
         Copy-Item -Path $userfolder -Destination X:\$oldname -Recurse -Force
     }
 }
 
-$response = Read-Host "Do you want to check the hard drive for any more psts?"
-if ($response -eq 'y') {
+if (!($usedefaults)) {
+    $response = Read-Host "Do you want to check the hard drive for any more psts?"
+}
+
+if ($response -eq 'y' -or $AlwaysCheckForPSTs) {
     Write-Host "Looking on the C drive for all psts... "
     $drivepsts = Get-ChildItem -Path "C:\" -Recurse -Include '*.pst' -ErrorAction SilentlyContinue | Select-Object fullname,lastwritetime
     if ($drivepsts -ne $null) {
