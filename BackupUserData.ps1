@@ -30,12 +30,12 @@ ForEach ($line in $contents) {
 
 #Checking defaults.
 
-if ($usedefaults) {
+if ($UseBackupDefaults) {
     Write-Host "Using default values!!"
 }
 
 # Find the main folder we are going to work with
-if (!($usedefaults)) {
+if (!($UseBackupDefaults)) {
     $response = Read-Host("Do you want to backup to USB key? ")
 } 
 if ($response -eq 'y' -or $AlwaysBackupToUSB) {
@@ -136,7 +136,7 @@ $Destcheck
 logit($(Compare-Object -ReferenceObject $Sourcecheck -DifferenceObject $Destcheck))
 Write-Host "All the above files have been copied"
 
-if (!($usedefaults)) {
+if (!($UseBackupDefaults)) {
     $response = Read-Host "Do you want to back up the docs/desktop/pics/videos folders? "
 }
 
@@ -166,7 +166,7 @@ if ($response -eq 'y' -or $AlwaysBackupDocs){
 #endregion
 
 #region psts
-if (!($usedefaults)) {
+if (!($UseBackupDefaults)) {
     $response = Read-Host "Do you want to back up the psts? "
 }
 
@@ -254,7 +254,7 @@ Invoke-Item $userfolder
 "$username copied at $(Get-Date) to $userfolder `n" | Out-File -FilePath "$def\MigrationLog.log" -Append
 "$username,$userfolder,$(Get-Date)" | Out-File -FilePath "$def\Current.csv" -Append
 
-if (!($usedefaults)) {
+if (!($UseBackupDefaults)) {
     $response = Read-Host "Do you want to copy the restored folder to the NAS? "
 }
 
@@ -265,7 +265,7 @@ if ($response -eq 'y' -or $AlwaysBackupToNAS) {
     }
 }
 
-if (!($usedefaults)) {
+if (!($UseBackupDefaults)) {
     $response = Read-Host "Do you want to check the hard drive for any more psts?"
 }
 
