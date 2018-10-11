@@ -1,18 +1,88 @@
 # win7migration
-backup and restore scripts to assist with win 7 to 10 migration
 
-BackupUserData.ps1
+Backup and restore scripts to assist with win 7 to 10 migration
 
-This script will backup the users data to the destination of your choice. Recommend backing up to USB key
+List of files:
 
-RestoreUserData.ps1 
+    BackupUserData.ps1
+        This script will backup the users data to the destination of your choice. Recommend backing up to USB key. 
 
-This will restore all the user data and copy their docs etc to onedrive
+    RestoreUserData.ps1 
+        This will restore all the user data and copy their docs etc to onedrive
 
-CheckInstalled.ps1
+    CheckInstalled.ps1
+        This will check if the essential software is a) installed and b) running. 
 
-This will check if the essential software is a) installed and b) running. 
+    CheckRemoteComputers.ps1 
+        The idea behind this is to check all the computers in the list ADPCList.txt so we can see what is installed on the already built machines. At the moment it isn't working as I would like. 
 
-CheckRemoteComputers.ps1 
+    defaults.txt
+        This is for your list of default values for things like the backup destination, it also includes the default answers so the scipt can be run unattended. 
 
-The idea behind this is to check all the computers in the list ADPCList.txt so we can see what is installed on the already built machines. 
+Each of the .ps1 files includes a batch file to facilitate running easily. The script can be run from the batch or direcly in powershell if script execution is enabled. 
+
+
+Backup User Data script. 
+
+Functions:
+    Backup user data to a secure location 
+    Backup the my docs/desktop/pictures/videos folders
+    Backup Google Chrome bookmarks
+    Find all the active PSTs on the computer
+    Back up all active PSTs
+    Disconnect PSTs from outlook
+    Further back up all the users data to a secondary location
+    Check for any other PSTs on the users hard drive
+
+
+Restore User Data script.
+
+Functions:
+    Check the new computer for essential software
+    Check all necessary processes are running
+    Ensure GPUdate is run to trigger OneDrive install
+    Special check for Office 13 for certain markets
+    Restore the users folders
+    Convert Sticky Notes for use with Win 10
+    Restore Chrome bookmarks
+    Restore my docs/desktop/pictures/videos folders to OneDrive
+    Copy the PST files to Downloads folder for ease of importing to O365
+
+
+defaults text file
+    Looks a bit like this: 
+        nas:\\10.61.11.125\ukipst\Import
+        def:\\UKBHSR255\PSTImport
+        creds:ukiadm
+        UseBackupDefaults:true
+        AlwaysBackupToUSB:true
+        AlwaysBackupDocs:true
+        AlwaysBackupPST:true
+        AlwaysBackupToNAS:false
+        AlwaysCheckForPSTs:true
+        UseRestoreDefaults:true
+        AlwaysRestoreFromUSB:true
+        AlwaysRestoreUsersFolders:true
+        AlwaysRestoreToOneDrive:true
+        AlwaysCopyPSTSToDLs:true
+
+    This file will set the defaults for the script, the left hand side is the variable name and the right hand side is the value. Both scripts will read from the same file but only use the variable they need. 
+
+                                DO NOT CHANGE ANY VALUE ON THE LEFT HAND SIDE!!!
+
+Each entry in detail: 
+    nas: - This is a text string for the secondary backup location 
+    def: - This is the alternative backup (It is recommended to backup to USB for speed)
+    creds: - The username for the secondary location
+    UseBackupDefaults: - This is a flag to use the defaults, if set to false the backup script will ask for each section
+    AlwaysBackupToUSB: - Sets the script to backup to USB, it will still ask where the drive is located
+    AlwaysBackupDocs: - Sets the script to backup the My Documents/Desktop/Pictures/Videos folders
+    AlwaysBackupPST: - Set the script to check for active PSTs and back them up
+    AlwaysBackupToNAS: - Sets the script to backup the backup to the secondary location
+    AlwaysCheckForPSTs: - Sets the script to check the hard drive for any inactive PSTs
+
+    UseRestoreDefaults: - Same as backup but for the restore script
+    AlwaysRestoreFromUSB: - Sets the script to restore from USB
+    AlwaysRestoreUsersFolders: - Sets the script to restore the Sticky Notes, Signatures, etc 
+    AlwaysRestoreToOneDrive: - Sets the script to always restore the My Docs and Desktop folders to OneDrive
+    AlwaysCopyPSTSToDLs: - Sets the script to copy all PSTs into the Download folder 
