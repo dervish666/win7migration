@@ -22,22 +22,16 @@ function logit([string]$Entry) {
 $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
 $contents = Get-Content ".\defaults.txt"
-$nas = $contents[0].split(":")[1]
-$def = $contents[1].split(":")[1]
-$defdest = "$def\$username"
-$nascreds = $contents[2].split(":")[1]
-$usedefaults = $contents[3].split(":")[1]
-$AlwaysBackupToUSB = $contents[4].split(":")[1]
-$AlwaysBackupDocs = $contents[5].split(":")[1]
-$AlwaysBackupPST = $contents[6].split(":")[1]
-$AlwaysBackupToNAS = $contents[7].split(":")[1]
-$AlwaysCheckForPSTs = $contents[8].split(":")[1]
+$i=0
+ForEach ($line in $contents) {
+    New-Variable -Name $contents[$i].split(":")[0] -Value $contents[$i].split(":")[1]
+    $i++
+}
 
 #Checking defaults.
 
 if ($usedefaults) {
     Write-Host "Using default values!!"
-    Read-Host
 }
 
 # Find the main folder we are going to work with

@@ -13,10 +13,11 @@ $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
 
 $contents = Get-Content ".\defaults.txt"
-$nas = $contents[0].split(":")[1]
-$def = $contents[1].split(":")[1]
-$defdest = "$def\$username"
-$nascreds = $contents[2].split(":")[1]
+$i=0
+ForEach ($line in $contents) {
+    New-Variable -Name $contents[$i].split(":")[0] -Value $contents[$i].split(":")[1]
+    $i++
+}
 
 Write-Host "====================="
 Write-Host "User Restore script.."
@@ -113,9 +114,11 @@ Write-Host "If any of the above processes are not running, please fix before con
 #endregion
 
 #region startrestore
-Write-Host "Are you going to be restoring from the USB Key?"
-$response = Read-Host "Restoring from USB? "
-if ($response -ne 'y'-or $response -ne 'Y') {
+if (!($UseRestoreDefaults)) {
+    Write-Host "Are you going to be restoring from the USB Key?"
+    $response = Read-Host "Restoring from USB? "
+}
+if ($response -ne 'y' -or $AlwaysRestoreFromUSB) {
     Write-Host "Default source is : $nas"
     if (($userfolder = Read-Host "Please enter the source or enter for default:") -eq '') {
         $userfolder = New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
@@ -139,8 +142,11 @@ If (Test-Path $userfolder) {
     Write-Host "Unable to find the users folder! Will restore only from Users$"
 }
 
-$response = Read-Host("Do you want to restore the users folders? ")
-if ($response -eq 'y') {
+if (!($UseRestoreDefaults)){
+    $response = Read-Host("Do you want to restore the users folders? ")
+}
+
+if ($response -eq 'y' -or $AlwaysRestoreUsersFolders) {
     #Rename Sticky notes ready for import
     if ($winver.Version.Major -eq '10') {
         if (Test-Path "$userfolder\Sticky Notes\StickyNotes.snt") {
@@ -194,8 +200,11 @@ if (Test-Path $userfolder\bookmarks) {
     Copy-Item -Path "$userfolder\bookmarks" -Destination "$userprofile\appdata\Local\Google\Chrome\User Data\default\" -Force
 }
 
-$response = Read-Host("Do you want to restore the Docs/desktop/pic/vids folders to Onedrive? ") 
-if ($response -eq 'y') {
+if (!($UseRestoreDefaults)) {
+    $response = Read-Host("Do you want to restore the Docs/desktop/pic/vids folders to Onedrive? ") 
+}
+
+if ($response -eq 'y' -or $AlwaysRestoreToOneDrive) {
     if ($usb) {
         $sauce = $userfolder
 
@@ -234,8 +243,12 @@ if ($response -eq 'y') {
 #endregion
 
 #region finishup
-$response = Read-Host ("Do you want to copy the psts to downloads? ")
-if ($response -eq 'y') {
+
+if (!($UseRestoreDefaults)) {
+    $response = Read-Host ("Do you want to copy the psts to downloads? ")
+}
+
+if ($response -eq 'y' -or $AlwaysCopyPSTSToDLs) {
     # Copy pst files to Downloads folder. 
     logit("Copying the psts to the Downloads folder")
     Copy-Item -Path $userfolder\*.pst -Include "*.pst" -Destination "$userprofile\Downloads\" -Recurse
