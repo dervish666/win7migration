@@ -13,10 +13,6 @@ List of files:
     CheckInstalled.ps1
         This will check if the essential software is a) installed and b) running. 
 
-    CheckRemoteComputers.ps1 
-        The idea behind this is to check all the computers in the list ADPCList.txt so we can see what is installed 
-        on the already built machines. At the moment it isn't working as I would like. 
-
     defaults.txt
         This is for your list of default values for things like the backup destination, it also includes the default 
         answers so the scipt can be run unattended. 
@@ -24,7 +20,8 @@ List of files:
 Each of the .ps1 files includes a batch file to facilitate running easily. The script can be run from the batch or directly in powershell if script execution is enabled. 
 
 Process:
-    
+    This is the overall process for migrating users 
+
     Backup Process 
 
         Each market adjusts the defauls.txt file to suit their usage
@@ -44,10 +41,11 @@ Process:
         Run restore script
         Enter users old name, allow script to finish
         Open Outlook, import any PSTs from the Downloads folder
-        
+
 
 
 Backup User Data script. 
+    A bit more detail on the individual scripts.
 
 Process:
 
