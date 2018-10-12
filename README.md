@@ -23,6 +23,29 @@ List of files:
 
 Each of the .ps1 files includes a batch file to facilitate running easily. The script can be run from the batch or directly in powershell if script execution is enabled. 
 
+Process:
+    
+    Backup Process 
+
+        Each market adjusts the defauls.txt file to suit their usage
+        Format USB stick to NTFS with at least 64GB capacity
+        Copy entire win7migration folder to usb stick
+        Floorwalker then takes USB to the users machine runs BackupUserData.bat from the USB
+        Floorwalker chooses USB drive letter, lets script finish
+        Data is now on USB and optionally backed up to the NAS
+
+    Restore Process
+
+        Adjust defaults.txt
+        Using stick from backup, run the Restore script
+        If first time running script, do a gpupdate
+        Reboot
+        Check Onedrive is configured, if not wait
+        Run restore script
+        Enter users old name, allow script to finish
+        Open Outlook, import any PSTs from the Downloads folder
+        
+
 
 Backup User Data script. 
 
@@ -85,8 +108,7 @@ Each entry in detail:
     
     Backup variables:
     
-    UseBackupDefaults: - This is a flag to use the defaults, if set to false the backup script will ask 
-    for each section
+    UseBackupDefaults: - This is a flag to use the defaults, if set to false the backup script will ask for each section
     AlwaysBackupToUSB: - Sets the script to backup to USB, it will still ask where the drive is located
     AlwaysBackupDocs: - Sets the script to backup the My Documents/Desktop/Pictures/Videos folders
     AlwaysBackupPST: - Set the script to check for active PSTs and back them up
