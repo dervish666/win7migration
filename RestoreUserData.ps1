@@ -12,22 +12,35 @@ $winver = [Environment]::OSVersion
 $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
 
-$contents = Get-Content ".\defaults.txt"
-$i=0
-ForEach ($line in $contents) {
-    New-Variable -Name $contents[$i].split(":")[0] -Value $contents[$i].split(":")[1]
-    $i++
-}
-
 Write-Host "====================="
 Write-Host "User Restore script.."
 Write-Host "====================="
+
+#Checking defaults.
+$contents = Get-Content ".\defaults.txt"
+$i=0
+Write-Host "`nDefault values from defaults.txt`n"
+ForEach ($line in $contents) {
+    New-Variable -Name $contents[$i].split(":")[0] -Value $contents[$i].split(":")[1]
+    Write-Host -NoNewline "$($contents[$i].split(":")[0]) = "
+    if ($($contents[$i].split(":")[1]) -eq 'true') {
+        Write-Host -ForegroundColor Green "$($contents[$i].split(":")[1])"
+    } elseif ($($contents[$i].split(":")[1]) -eq 'false') {
+        Write-Host -ForegroundColor Red "$($contents[$i].split(":")[1])"
+    } else {
+        Write-Host "$($contents[$i].split(":")[1])"
+    }
+    $i++
+}
+
+Write-Host "`n===`n"
 
 $oldname = Read-Host("What was the old username for this user? ")
 $UserProfile = [Environment]::GetFolderPath("UserProfile")
 $onedrive = "$userprofile\OneDrive - IMPERIAL TOBACCO LTD"
 if (!(Test-Path $onedrive)) {
-    Write-Host "Can't find the users Onedrive folder!"
+    Write-Host "Can't find the users Onedrive folder! - Make sure you do the gpupdate in a minute and reboot after."
+    Read-Host
     $documents = [Environment]::GetFolderPath("MyDocuments")
     $logfile = "$documents\$username.restore.log"
 } else {

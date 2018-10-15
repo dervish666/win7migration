@@ -2,7 +2,7 @@
 #  User data backup script    #
 #                             #
 #  15/08/18 - First version   #
-#  26/09/18 - Latest revision #
+#  15/10/18 - Latest revision #
 #                             #
 #  Sam Castillo               #
 ###############################
@@ -21,18 +21,25 @@ function logit([string]$Entry) {
 [string]$username = WMIC /node:$env:computername ComputerSystem Get username 
 $username = $username  -replace ".*\\", ""
 $username = $username.Trim()
+
+#Checking defaults.
 $contents = Get-Content ".\defaults.txt"
 $i=0
+Write-Host "`nDefault values from defaults.txt`n"
 ForEach ($line in $contents) {
     New-Variable -Name $contents[$i].split(":")[0] -Value $contents[$i].split(":")[1]
+    Write-Host -NoNewline "$($contents[$i].split(":")[0]) = "
+    if ($($contents[$i].split(":")[1]) -eq 'true') {
+        Write-Host -ForegroundColor Green "$($contents[$i].split(":")[1])"
+    } elseif ($($contents[$i].split(":")[1]) -eq 'false') {
+        Write-Host -ForegroundColor Red "$($contents[$i].split(":")[1])"
+    } else {
+        Write-Host "$($contents[$i].split(":")[1])"
+    }
     $i++
 }
 
-#Checking defaults.
-
-if ($UseBackupDefaults) {
-    Write-Host "Using default values!!"
-}
+Write-Host "`n===`n"
 
 # Find the main folder we are going to work with
 if (!($UseBackupDefaults)) {
