@@ -24,7 +24,7 @@ Process:
 
     Backup Process 
 
-        Each market adjusts the defauls.txt file to suit their usage
+        Each market adjusts the defaults.txt file to suit their usage
         Format USB stick to NTFS with at least 64GB capacity
         Copy entire win7migration folder to usb stick
         Floorwalker then takes USB to the users machine runs BackupUserData.bat from the USB
