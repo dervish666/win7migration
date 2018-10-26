@@ -1,7 +1,7 @@
 nas:\\10.61.11.125\ukipst\Import
 def:\\UKBHSR255\PSTImport
 creds:ukiadm
-UseDefaults:true
+UseBackupDefaults:true
 AlwaysBackupToUSB:true
 AlwaysBackupDocs:true
 AlwaysBackupPST:true
