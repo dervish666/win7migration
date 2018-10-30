@@ -41,8 +41,6 @@ ForEach ($line in $contents) {
 
 Write-Host "`n===`n"
 
-read-host
-
 # Find the main folder we are going to work with
 if (!($UseBackupDefaults -eq 'true')) {
     $response = Read-Host("Do you want to backup to USB key? ")
