@@ -1,7 +1,14 @@
 Win 7 user migration.
 
+v1.03
+=====
+Bugfix, was not reading the true/false state of the variables properly. 
+
+
+v1.02
+=====
+Fixed defaults.txt bug, incorrect variable name corrected
 
 v1.01
 =====
-
 Initial release. 

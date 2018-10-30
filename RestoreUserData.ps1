@@ -127,12 +127,12 @@ Write-Host "If any of the above processes are not running, please fix before con
 #endregion
 
 #region startrestore
-if (!($UseRestoreDefaults)) {
+if ($UseRestoreDefaults -eq 'false') {
     Write-Host "Are you going to be restoring from the USB Key?"
     $response = Read-Host "Restoring from USB? "
 }
 
-if ($response -eq 'y' -or $AlwaysRestoreFromUSB) {
+if ($response -eq 'y' -or $AlwaysRestoreFromUSB -eq 'true') {
     $driveletter = Read-Host("Please enter drive letter for the usb key")
     $userfolder = "$($driveletter):\$oldname"
     $usb = $true
@@ -156,11 +156,11 @@ If (Test-Path $userfolder) {
     Write-Host "Unable to find the users folder! Will restore only from Users$"
 }
 
-if (!($UseRestoreDefaults)){
+if ($UseRestoreDefaults -eq 'false'){
     $response = Read-Host("Do you want to restore the users folders? ")
 }
 
-if ($response -eq 'y' -or $AlwaysRestoreUsersFolders) {
+if ($response -eq 'y' -or $AlwaysRestoreUsersFolders -eq 'true') {
     #Rename Sticky notes ready for import
     if ($winver.Version.Major -eq '10') {
         if (Test-Path "$userfolder\Sticky Notes\StickyNotes.snt") {
@@ -214,11 +214,11 @@ if (Test-Path $userfolder\bookmarks) {
     Copy-Item -Path "$userfolder\bookmarks" -Destination "$userprofile\appdata\Local\Google\Chrome\User Data\default\" -Force
 }
 
-if (!($UseRestoreDefaults)) {
+if ($UseRestoreDefaults -eq 'false') {
     $response = Read-Host("Do you want to restore the Docs/desktop/pic/vids folders to Onedrive? ") 
 }
 
-if ($response -eq 'y' -or $AlwaysRestoreToOneDrive) {
+if ($response -eq 'y' -or $AlwaysRestoreToOneDrive -eq 'true') {
     if ($usb) {
         $sauce = $userfolder
 
@@ -258,11 +258,11 @@ if ($response -eq 'y' -or $AlwaysRestoreToOneDrive) {
 
 #region finishup
 
-if (!($UseRestoreDefaults)) {
+if ($UseRestoreDefaults -eq 'false') {
     $response = Read-Host ("Do you want to copy the psts to downloads? ")
 }
 
-if ($response -eq 'y' -or $AlwaysCopyPSTSToDLs) {
+if ($response -eq 'y' -or $AlwaysCopyPSTSToDLs -eq 'true') {
     # Copy pst files to Downloads folder. 
     logit("Copying the psts to the Downloads folder")
     Copy-Item -Path $userfolder\*.pst -Include "*.pst" -Destination "$userprofile\Downloads\" -Recurse

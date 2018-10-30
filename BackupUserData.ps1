@@ -41,11 +41,13 @@ ForEach ($line in $contents) {
 
 Write-Host "`n===`n"
 
+read-host
+
 # Find the main folder we are going to work with
-if (!($UseBackupDefaults)) {
+if (!($UseBackupDefaults -eq 'true')) {
     $response = Read-Host("Do you want to backup to USB key? ")
 } 
-if ($response -eq 'y' -or $AlwaysBackupToUSB) {
+if ($response -eq 'y' -or $AlwaysBackupToUSB -eq 'true') {
     Get-WmiObject Win32_Volume -Filter ("DriveType={0}" -f [int][System.io.Drivetype]::removable) | Select-Object Name, capacity, filesystem
     $driveletter = Read-Host("Please enter the drive letter for the usb key")
     $userfolder = "$($driveletter):\$username"
@@ -143,11 +145,11 @@ $Destcheck
 logit($(Compare-Object -ReferenceObject $Sourcecheck -DifferenceObject $Destcheck))
 Write-Host "All the above files have been copied"
 
-if (!($UseBackupDefaults)) {
+if ($UseBackupDefaults -eq 'false') {
     $response = Read-Host "Do you want to back up the docs/desktop/pics/videos folders? "
 }
 
-if ($response -eq 'y' -or $AlwaysBackupDocs){
+if ($response -eq 'y' -or $AlwaysBackupDocs -eq 'true'){
     $documents = [Environment]::GetFolderPath("MyDocuments")
     $desktop = [Environment]::GetFolderPath("Desktop")
     $pictures = [Environment]::GetFolderPath("MyPictures")
@@ -173,11 +175,11 @@ if ($response -eq 'y' -or $AlwaysBackupDocs){
 #endregion
 
 #region psts
-if (!($UseBackupDefaults)) {
+if ($UseBackupDefaults -eq 'false') {
     $response = Read-Host "Do you want to back up the psts? "
 }
 
-if ($response -eq 'y' -or $AlwaysBackupPST) {
+if ($response -eq 'y' -or $AlwaysBackupPST -eq 'true') {
     # Find out if outlook is running
     if (Get-Process -EA SilentlyContinue outlook | Where-Object {$_.ProcessName -eq "Outlook"}) {
         Write-Host "Outlook running..."
@@ -261,22 +263,22 @@ Invoke-Item $userfolder
 "$username copied at $(Get-Date) to $userfolder `n" | Out-File -FilePath "$def\MigrationLog.log" -Append
 "$username,$userfolder,$(Get-Date)" | Out-File -FilePath "$def\Current.csv" -Append
 
-if (!($UseBackupDefaults)) {
+if ($UseBackupDefaults -eq 'false') {
     $response = Read-Host "Do you want to copy the restored folder to the NAS? "
 }
 
-if ($response -eq 'y' -or $AlwaysBackupToNAS) {
+if ($response -eq 'y' -or $AlwaysBackupToNAS -eq 'true') {
     if ($usb) {
         New-PSDrive -Name X -PSProvider FileSystem -Root $nas -Credential $nascreds
         Copy-Item -Path $userfolder -Destination X:\$oldname -Recurse -Force
     }
 }
 
-if (!($UseBackupDefaults)) {
+if ($UseBackupDefaults -eq 'false') {
     $response = Read-Host "Do you want to check the hard drive for any more psts?"
 }
 
-if ($response -eq 'y' -or $AlwaysCheckForPSTs) {
+if ($response -eq 'y' -or $AlwaysCheckForPSTs -eq 'true') {
     Write-Host "Looking on the C drive for all psts... "
     $drivepsts = Get-ChildItem -Path "C:\" -Recurse -Include '*.pst' -ErrorAction SilentlyContinue | Select-Object fullname,lastwritetime
     if ($drivepsts -ne $null) {
