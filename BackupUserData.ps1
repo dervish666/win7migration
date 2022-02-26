@@ -10,7 +10,7 @@
 Write-Host "====================="
 Write-Host "User Backup script..."
 Write-Host "====================="
-
+# extra comment...
 # This is a simple function to create a log file 
 function logit([string]$Entry) {
     $Entry | Out-File -Append $logfile
